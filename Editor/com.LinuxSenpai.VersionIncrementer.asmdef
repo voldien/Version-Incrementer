@@ -1,3 +1,7 @@
 ﻿{
-	"name": "com.LinuxSenpai.VersionIncrementer"
+	"name": "com.LinuxSenpai.VersionIncrementer",
+	"includePlatforms": [
+    	"Editor"
+	],
+  	"excludePlatforms": []
 }
