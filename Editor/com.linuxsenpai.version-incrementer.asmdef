@@ -1,5 +1,5 @@
 ﻿{
-	"name": "com.LinuxSenpai.VersionIncrementer",
+	"name": "com.linuxsenpai.version-incrementer",
 	"includePlatforms": [
     	"Editor"
 	],

@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public class VersionIncrementorSettings : ScriptableObject
 {
-	public const string k_VersionIncrementorSettingsPath = "Assets/Editor/VersionIncrementorSettings.asset";
 
 	[SerializeField]
 	private bool increment_on_play;
@@ -34,12 +33,18 @@ public class VersionIncrementorSettings : ScriptableObject
 
 	public static bool IsSettingsAvailable()
 	{
-		return File.Exists(k_VersionIncrementorSettingsPath);
+		return File.Exists(GetSettingFilePath());
+	}
+
+	public static string GetSettingFilePath(){
+		//TOOD handle the path for the asset file.
+		return "Assets/Editor/VersionIncrementorSettings.asset";
 	}
 
 	internal static VersionIncrementorSettings GetOrCreateSettings()
 	{
-		VersionIncrementorSettings settings = AssetDatabase.LoadAssetAtPath<VersionIncrementorSettings>(k_VersionIncrementorSettingsPath);
+
+		VersionIncrementorSettings settings = AssetDatabase.LoadAssetAtPath<VersionIncrementorSettings>(GetSettingFilePath());
 		if (settings == null)
 		{
 			/*	Create default setting object.	*/
@@ -50,7 +55,7 @@ public class VersionIncrementorSettings : ScriptableObject
 			settings.m_minor = 0;
 			settings.m_patch = 0;
 			settings.m_releaseStates = ReleaseState.PreAlpha;
-			AssetDatabase.CreateAsset(settings, k_VersionIncrementorSettingsPath);
+			AssetDatabase.CreateAsset(settings, GetSettingFilePath());
 			AssetDatabase.SaveAssets();
 		}
 		return settings;

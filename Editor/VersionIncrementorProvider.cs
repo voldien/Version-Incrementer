@@ -12,20 +12,20 @@ class VersionIncrementorSettingsProvider : SettingsProvider
 
 	class Styles
 	{
+		public static GUIContent settingLabel = new GUIContent("Settings");
 		public static GUIContent incrementOnPlay = new GUIContent("Increment on Play", "The patch will be incremented after each play session in the editor.");
 		public static GUIContent incrementOnBuild = new GUIContent("Increment on Build", "The patch will incremented after each compilation in the editor.");
 		public static GUIContent version = new GUIContent("Version", "The current version of the project.");
 		public static GUIContent ReleaseState = new GUIContent("ReleaseState", "The current release state of the project.");
 	}
 
-	const string k_VersionIncrementorSettingsPath = "Assets/Editor/VersionIncrementorSettings.asset";
 
 	public VersionIncrementorSettingsProvider(string path, SettingsScope scope = SettingsScope.User)
 		: base(path, scope) { }
 
 	public static bool IsSettingsAvailable()
 	{
-		return File.Exists(k_VersionIncrementorSettingsPath);
+		return File.Exists(VersionIncrementorSettings.GetSettingFilePath());
 	}
 
 	public override void OnActivate(string searchContext, VisualElement rootElement)
@@ -37,15 +37,24 @@ class VersionIncrementorSettingsProvider : SettingsProvider
 	{
 		m_VersionIncrementorSettings.Update();
 		// Use IMGUI to display UI:
+		var indent = EditorGUI.indentLevel;
+		EditorGUI.indentLevel++;		
+		EditorGUILayout.LabelField(Styles.settingLabel, EditorStyles.boldLabel);
+		EditorGUI.indentLevel++;
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("increment_on_play"), Styles.incrementOnPlay);
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("increment_on_build"), Styles.incrementOnBuild);
+
+		EditorGUI.indentLevel = indent + 1;
+		EditorGUILayout.LabelField(Styles.version,EditorStyles.boldLabel);
+		EditorGUI.indentLevel++;
 		EditorGUILayout.BeginHorizontal();
-		EditorGUILayout.LabelField(Styles.version);
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("m_major"));
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("m_minor"));
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("m_patch"));
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.PropertyField(m_VersionIncrementorSettings.FindProperty("m_releaseStates"), Styles.ReleaseState);
+
+		EditorGUI.indentLevel = indent;
 
 		VersionIncrementorSettings settings = (VersionIncrementorSettings)m_VersionIncrementorSettings.targetObject;
 
@@ -58,19 +67,20 @@ class VersionIncrementorSettingsProvider : SettingsProvider
 			}
 		}
 		m_VersionIncrementorSettings.ApplyModifiedProperties();
+
+
 	}
 
 	[SettingsProvider]
-	public static SettingsProvider CreateMyCustomSettingsProvider()
+	public static SettingsProvider CreateVersionIncrementorSettingsProvider()
 	{
-		if (IsSettingsAvailable())
+		if (!IsSettingsAvailable())
 		{
-			SettingsProvider provider = new VersionIncrementorSettingsProvider("Project/Version Incrementor Settings", SettingsScope.Project);
-
-			provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
-			return provider;
+			VersionIncrementorSettings.GetOrCreateSettings();
 		}
+		SettingsProvider provider = new VersionIncrementorSettingsProvider("Project/Version Incrementer Settings", SettingsScope.Project);
 
-		return null;
+		provider.keywords = GetSearchKeywordsFromGUIContentProperties<Styles>();
+		return provider;
 	}
 }
