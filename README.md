@@ -15,7 +15,7 @@ Find `Packages/manifest.json` in your project and add the following:
 ```json
 {
   "dependencies": {
-    "com.linuxsenpai.versionincrementer": "https://github.com/voldien/Version-Incrementer",
+    "com.linuxsenpai.versionincrementer": "https://github.com/voldien/Version-Incrementer.git",
     "...": "..."
   }
 }
