@@ -35,10 +35,8 @@ public class VersionIncrementorSettings : ScriptableObject
 	{
 		return File.Exists(GetSettingFilePath());
 	}
-
 	public static string GetSettingFilePath(){
-		//TOOD handle the path for the asset file.
-		return "Assets/Editor/VersionIncrementorSettings.asset";
+		return "Assets/Editor/com.linuxsenpai.versionincrementer/VersionIncrementorSettings.asset";
 	}
 
 	internal static VersionIncrementorSettings GetOrCreateSettings()
@@ -47,6 +45,15 @@ public class VersionIncrementorSettings : ScriptableObject
 		VersionIncrementorSettings settings = AssetDatabase.LoadAssetAtPath<VersionIncrementorSettings>(GetSettingFilePath());
 		if (settings == null)
 		{
+			/*	Create and make sure the directory exits.	*/
+			if (!AssetDatabase.IsValidFolder("Assets/Editor"))
+			{
+				string guid = AssetDatabase.CreateFolder("Assets", "Editor");
+			}
+			if (!AssetDatabase.IsValidFolder("Assets/Editor/com.linuxsenpai.versionincrementer"))
+			{
+				string guid1 = AssetDatabase.CreateFolder("Assets/Editor", "com.linuxsenpai.versionincrementer");
+			}
 			/*	Create default setting object.	*/
 			settings = ScriptableObject.CreateInstance<VersionIncrementorSettings>();
 			settings.increment_on_play = true;
